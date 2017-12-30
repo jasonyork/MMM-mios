@@ -30,7 +30,7 @@ Module.register("MMM-mios",{
 		var dataNotification = null;
 		this.miosData = {};
 		if (this.config.host) {
-			this.sendSocketNotification('SET_CONFIG', this.config);
+			this.sendSocketNotification("SET_CONFIG", this.config);
 			setInterval(function() {
 				self.getData();
 			}, this.config.updateInterval);
@@ -60,9 +60,11 @@ Module.register("MMM-mios",{
 	socketNotificationReceived: function (notification, data) {
 		if (notification === "REFRESH") {
 			this.miosData = data;
-			if (data.indoorTemperature) this.sendNotification("INDOOR_TEMPERATURE", data.indoorTemperature);
-			if (data.powerConsumption) this.sendNotification("POWER_CONSUMPTION", data.powerConsumption);
-			if (data.energyUsage) this.sendNotification("ENERGY_USAGE", data.energyUsage);
+			if (data.indoorTemperature) { this.sendNotification("INDOOR_TEMPERATURE", data.indoorTemperature); }
+			if (data.outdoorTemperature) { this.sendNotification("OUTDOOR_TEMPERATURE", data.outdoorTemperature); }
+			if (data.outdoorHumidity) { this.sendNotification("OUTDOOR_HUMIDITY", data.outdoorHumidity); }
+			if (data.powerConsumption) { this.sendNotification("POWER_CONSUMPTION", data.powerConsumption); }
+			if (data.energyUsage) { this.sendNotification("ENERGY_USAGE", data.energyUsage); }
 			this.updateDom();
 		}
 	},

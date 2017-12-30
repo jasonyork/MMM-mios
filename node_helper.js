@@ -18,7 +18,9 @@ module.exports = NodeHelper.create({
 			this.config = payload
 			if (this.config.host) {
 				this.mios = new MiOS(this.config.host, (mios) => {
-					this.temperatureDevice = this.mios.deviceByName(this.config.devices.indoorTemperature)
+					this.indoorTemperatureDevice = this.mios.deviceByName(this.config.devices.indoorTemperature)
+					this.outdoorTemperatureDevice = this.mios.deviceByName(this.config.devices.outdoorTemperature)
+					this.outdoorHumidityDevice = this.mios.deviceByName(this.config.devices.outdoorHumidity)
 					this.energyDevice = this.mios.deviceByName(this.config.devices.energy)
 					this.refresh()
 				});
@@ -33,9 +35,16 @@ module.exports = NodeHelper.create({
 		if (!this.mios) { return }
 		data = {}
 		this.mios.refresh( () => {
-			if (this.temperatureDevice) {
-				var temperature = this.temperatureDevice.temperature()
+			if (this.indoorTemperatureDevice) {
+				var temperature = this.indoorTemperatureDevice.temperature()
 				data["indoorTemperature"] = this.convertTemperature(temperature)
+			}
+			if (this.outdoorTemperatureDevice) {
+				var temperature = this.outdoorTemperatureDevice.temperature()
+				data["outdoorTemperature"] = this.convertTemperature(temperature)
+			}
+			if (this.outdoorHumidityDevice) {
+				data["outdoorHumidity"] = this.outdoorHumidityDevice.humidity()
 			}
 			if (this.energyDevice) {
 				data["powerConsumption"] = this.energyDevice.watts()
