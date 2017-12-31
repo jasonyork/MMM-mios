@@ -50,7 +50,7 @@ module.exports = NodeHelper.create({
 				data["powerConsumption"] = this.energyDevice.watts()
 				data["energyUsage"] = this.energyDevice.kWh()
 			}
-			this.sendSocketNotification("REFRESH", data);
+			this.sendSocketNotification("MIOS_UPDATED", data);
 		})
 	},
 

@@ -1,6 +1,6 @@
 {
   "name": "MMM-mios",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A MagicMirror 2 module to interface with Vera MiOS home automation system",
   "main": "MMM-mios.js",
   "author": "Jason York",

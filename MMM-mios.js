@@ -28,12 +28,8 @@ Module.register("MMM-mios",{
 		var self = this;
 		var dataRequest = null;
 		var dataNotification = null;
-		this.miosData = {};
 		if (this.config.host) {
 			this.sendSocketNotification("SET_CONFIG", this.config);
-			setInterval(function() {
-				self.getData();
-			}, this.config.updateInterval);
 		}
 	},
 
@@ -43,23 +39,17 @@ Module.register("MMM-mios",{
 
 	getDom: function() {
 		var wrapper = document.createElement("div");
-		// console.log(this.miosData);
 		wrapper.innerHTML = ""
-		// if (this.miosData['indoorTemperature']) {
-		// 	wrapper.innerHTML += 'temp: ' + this.miosData['indoorTemperature'] + '<br>'
-		// }
-		// if (this.miosData['powerConsumption']) {
-		// 	wrapper.innerHTML += 'power: ' + this.miosData['powerConsumption'] + '<br>'
-		// }
-		// if (this.miosData['energyUsage']) {
-		// 	wrapper.innerHTML += 'energy: ' + this.miosData['energyUsage'] + '<br>'
-		// }
 		return wrapper;
 	},
 
 	socketNotificationReceived: function (notification, data) {
-		if (notification === "REFRESH") {
-			this.miosData = data;
+		if (notification === "DOM_OBJECTS_CREATED") {
+			setInterval(function() {
+				self.getData();
+			}, this.config.updateInterval);
+		}
+		if (notification === "MIOS_UPDATED") {
 			if (data.indoorTemperature) { this.sendNotification("INDOOR_TEMPERATURE", data.indoorTemperature); }
 			if (data.outdoorTemperature) { this.sendNotification("OUTDOOR_TEMPERATURE", data.outdoorTemperature); }
 			if (data.outdoorHumidity) { this.sendNotification("OUTDOOR_HUMIDITY", data.outdoorHumidity); }
