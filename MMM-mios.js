@@ -25,15 +25,13 @@ Module.register("MMM-mios",{
 	requiresVersion: "2.1.0", // Required version of MagicMirror
 
 	start: function() {
-		var self = this;
-		var dataRequest = null;
-		var dataNotification = null;
 		if (this.config.host) {
 			this.sendSocketNotification("SET_CONFIG", this.config);
 		}
 	},
 
 	getData: function() {
+		Log.log(this.name + " sending REFRESH socket request");
 		this.sendSocketNotification("REFRESH");
 	},
 
@@ -43,19 +41,30 @@ Module.register("MMM-mios",{
 		return wrapper;
 	},
 
-	socketNotificationReceived: function (notification, data) {
-		if (notification === "DOM_OBJECTS_CREATED") {
-			setInterval(function() {
-				self.getData();
-			}, this.config.updateInterval);
+	notificationReceived: function(notification, payload, sender) {
+		if (sender) {
+			Log.log(this.name + " received a module notification: " + notification + " from sender: " + sender.name);
+		} else {
+			Log.log(this.name + " received a system notification: " + notification);
 		}
+		if (notification === "DOM_OBJECTS_CREATED") {
+			this.getData();
+			setInterval(this.getData, this.config.updateInterval);
+		}
+	},
+
+	socketNotificationReceived: function (notification, data) {
+		Log.log(this.name + " received a socket notification: " + notification);
 		if (notification === "MIOS_UPDATED") {
-			if (data.indoorTemperature) { this.sendNotification("INDOOR_TEMPERATURE", data.indoorTemperature); }
-			if (data.outdoorTemperature) { this.sendNotification("OUTDOOR_TEMPERATURE", data.outdoorTemperature); }
-			if (data.outdoorHumidity) { this.sendNotification("OUTDOOR_HUMIDITY", data.outdoorHumidity); }
-			if (data.powerConsumption) { this.sendNotification("POWER_CONSUMPTION", data.powerConsumption); }
-			if (data.energyUsage) { this.sendNotification("ENERGY_USAGE", data.energyUsage); }
-			this.updateDom();
+			self = this;
+			setTimeout( function() {
+				Log.log(this.name + " sending MIOS notifications");
+				if (data.indoorTemperature) { self.sendNotification("INDOOR_TEMPERATURE", data.indoorTemperature); }
+				if (data.outdoorTemperature) { self.sendNotification("OUTDOOR_TEMPERATURE", data.outdoorTemperature); }
+				if (data.outdoorHumidity) { self.sendNotification("OUTDOOR_HUMIDITY", data.outdoorHumidity); }
+				if (data.powerConsumption) { self.sendNotification("POWER_CONSUMPTION", data.powerConsumption); }
+				if (data.energyUsage) { self.sendNotification("ENERGY_USAGE", data.energyUsage); }
+			}, 1000);
 		}
 	},
 });
