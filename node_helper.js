@@ -11,8 +11,6 @@ var MiOS = require("mios-client");
 module.exports = NodeHelper.create({
 
 	socketNotificationReceived: function(notification, payload) {
-		console.log(this.name + " received a socket notification: " + notification);
-
 		if (notification === "SET_CONFIG") {
 			this.config = payload
 			if (this.config.host) {
@@ -32,7 +30,6 @@ module.exports = NodeHelper.create({
 	refresh: function() {
 		if (!this.mios) { return }
 		var data = {}
-		console.log(this.name + " making mios refresh request");
 		this.mios.refresh( () => {
 			if (this.indoorTemperatureDevice) {
 				var temperature = this.indoorTemperatureDevice.temperature()
@@ -49,7 +46,6 @@ module.exports = NodeHelper.create({
 				data["powerConsumption"] = this.energyDevice.watts()
 				data["energyUsage"] = this.energyDevice.kWh()
 			}
-			console.log(this.name + " mios refreshed");
 			this.sendSocketNotification("MIOS_UPDATED", data);
 		})
 	},
