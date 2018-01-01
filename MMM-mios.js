@@ -49,7 +49,7 @@ Module.register("MMM-mios",{
 		}
 		if (notification === "DOM_OBJECTS_CREATED") {
 			this.getData();
-			setInterval(this.getData, this.config.updateInterval);
+			setInterval(this.getData.bind(this), this.config.updateInterval);
 		}
 	},
 
